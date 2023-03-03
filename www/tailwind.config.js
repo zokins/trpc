@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     //
@@ -16,6 +17,21 @@ module.exports = {
           lighter: 'var(--ifm-color-primary-lighter)',
           lightest: 'var(--ifm-color-primary-lightest)',
         },
+      },
+      keyframes: {
+        'pop-in': {
+          '0%': {
+            opacity: 0,
+            transform: 'translateY(48px)',
+          },
+          '100%': {
+            opacity: 1,
+            transform: 'translateY(0)',
+          },
+        },
+      },
+      animation: {
+        'pop-in': 'pop-in 1s cubic-bezier(0, 0, 0.2, 1)',
       },
     },
   },
