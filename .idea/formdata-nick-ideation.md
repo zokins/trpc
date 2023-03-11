@@ -10,7 +10,7 @@ Currently we have an input parser type like this:
 export type Parser = ParserWithoutInput<any> | ParserWithInputOutput<any, any>;
 ```
 
-I propose we build on this with a `DataStrategy` base-class
+I'm imagine we build on this with a `DataStrategy` base-class. All of the aspects of `resolveHTTPResponse.ts` (and other parts of the invocation pipeline) which are coupled to JSON could be lifted up into the DataStrategy config. The first thing that could be done is the procedure is selected, then the DataStrategy can be used to handle the inputs as configured. Right now it's looking pretty tied to JSON data but it seems possible.
 
 ```ts
 // 
@@ -61,7 +61,11 @@ baseProcedure
 
 This could be applied on both .input and .output, where .input varies the content-type of a request, and .output varies the content-type of a response. 
 
+It would probably mean having to disable batching client-side for any procedures taking a non-json input/output but that's expected anyway I imagine?
+
 ## Client Side
+
+Client side I imagine has problems with varying the content-type due to the proxy not actually knowing anything at run-time, so we could enforce via typescript that an option is enabled, or write some dedicated hooks for the scenario?
 
 ```ts
 // Maybe use the proxy to forcible vary some alternative query/mutation methods?
