@@ -32,7 +32,7 @@ export class FormDataStrategy extends DataStrategy<FormData> {
 }
 
 export class OctetStreamStrategy extends DataStrategy<Stream> {
-  // implement methods for forms
+  // implement methods for streams
 }
 
 export type Parser = ParserWithoutInput<any> | ParserWithInputOutput<any, any> | DataStrategy<any>;
