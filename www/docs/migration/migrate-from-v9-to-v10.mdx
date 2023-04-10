@@ -429,7 +429,7 @@ The `@trpc/react` package has been renamed to `@trpc/react-query`. This is to re
 
 #### Major version upgrade of `react-query`
 
-We've upgraded `peerDependencies` from `react-query@^3` to `@tanstack/react-query@^4`. Because our client hooks are only a thin wrapper around react-query, we encourage you to [visit their migration guide](https://tanstack.com/query/v4/docs/guides/migrating-to-react-query-4) for more details about your new React hooks implementation.
+We've upgraded `peerDependencies` from `react-query@^3` to `@tanstack/react-query@^4`. Because our client hooks are only a thin wrapper around react-query, we encourage you to [visit their migration guide](https://tanstack.com/query/latest/docs/react/guides/migrating-to-react-query-4) for more details about your new React hooks implementation.
 
 #### tRPC-specific options on hooks moved to `trpc`
 
@@ -465,7 +465,7 @@ trpc.post.byId.useQuery('1', {
 If you only use the tRPC provided APIs in your app you will have no problems in
 migrating 👍 However if you have been using the tanstack query client directly
 to do things like update query data for multiple tRPC generated queries using
-[`queryClient.setQueriesData`](https://tanstack.com/query/v4/docs/reference/QueryClient#queryclientsetqueriesdata)
+[`queryClient.setQueriesData`](https://tanstack.com/query/latest/docs/react/reference/QueryClient#queryclientsetqueriesdata)
 you may need to take note!
 :::
 
