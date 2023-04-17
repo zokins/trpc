@@ -64,9 +64,8 @@ jobs:
             const pnpmWorkspace = `packages:\n` + workspaces.map((ws) => `  - '${ws}'`).join('\n');
             fs.writeFileSync(path.join(examplePath, 'pnpm-workspace.yaml'), pnpmWorkspace);
 
-      - run: |
-          cat ./examples/${{ matrix.path }}/pnpm-workspace.yaml
-          cat ./examples/${{ matrix.path }}/package.json
+      - run: cat ./examples/${{ matrix.path }}/pnpm-workspace.yaml
+      - run: cat ./examples/${{ matrix.path }}/package.json
 
       - name: Install dependencies and create separate lockfile
         run: |
