@@ -53,13 +53,20 @@ jobs:
             const packageJson = require(path.join(examplePath, 'package.json'));
             const { workspaces, ...rest } = packageJson;
 
-            if (!workspaces) return;
+            if (!workspaces) {
+              console.log("No workspaces found, skipping");
+              return;
+            }
 
-            const newPkgJson = JSON.stringify({ ...rest }, null, 2);
+            const newPkgJson = JSON.stringify(rest, null, 2);
             fs.writeFileSync(path.join(examplePath, 'package.json'), newPkgJson);
 
             const pnpmWorkspace = `packages:\n` + workspaces.map((ws) => `  - '${ws}'`).join('\n');
             fs.writeFileSync(path.join(examplePath, 'pnpm-workspace.yaml'), pnpmWorkspace);
+
+      - run: |
+          cat ./examples/${{ matrix.path }}/pnpm-workspace.yaml
+          cat ./examples/${{ matrix.path }}/package.json
 
       - name: Install dependencies and create separate lockfile
         run: |
