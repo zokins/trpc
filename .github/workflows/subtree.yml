@@ -53,6 +53,8 @@ jobs:
             const packageJson = require(path.join(examplePath, 'package.json'));
             const { workspaces, ...rest } = packageJson;
 
+            if (!workspaces) return;
+
             const newPkgJson = JSON.stringify({ ...rest }, null, 2);
             fs.writeFileSync(path.join(examplePath, 'package.json'), newPkgJson);
 
