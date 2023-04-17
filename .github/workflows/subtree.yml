@@ -55,18 +55,15 @@ jobs:
             if (!workspaces) return;
 
             // Convert scripts to PNPM
-            // npm run <script> -w <ws> => pnpm script -F <ws>
             const scripts = Object.fromEntries(
               Object.entries(rest.scripts)
                 .map(([name, script]) => {
                   const pnpmd = script
                     .replace('npm run', 'pnpm')
-                    .replace('npm', 'pnpm')
                     .replace('-w', '-F');
                   return [name, pnpmd];
                 })
             );
-
 
             // Move workspaces from package.json to pnpm-workspace.yaml
             const newPkgJson = JSON.stringify({ ...rest, scripts }, null, 2);
