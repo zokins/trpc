@@ -48,7 +48,7 @@ jobs:
             const fs = require('fs');
             const path = require('path');
 
-            const examplePath = path.join(__dirname, 'examples', '${{ matrix.path }}');
+            const examplePath = path.join(process.cwd(), 'examples', '${{ matrix.path }}');
             console.log({ examplePath });
             const packageJson = require(path.join(examplePath, 'package.json'));
             const { workspaces, ...rest } = packageJson;
