@@ -43,34 +43,42 @@ jobs:
       - name: Convert to PNPM
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
             const path = require('path');
 
             const examplePath = path.join(process.cwd(), 'examples', '${{ matrix.path }}');
-            console.log({ examplePath });
             const packageJson = require(path.join(examplePath, 'package.json'));
             const { workspaces, ...rest } = packageJson;
 
-            if (!workspaces) {
-              console.log("No workspaces found, skipping");
-              return;
-            }
+            // Graceful return for non-workspace examples
+            if (!workspaces) return;
 
-            const newPkgJson = JSON.stringify(rest, null, 2);
+            // Convert scripts to PNPM
+            // npm run <script> -w <ws> => pnpm script -F <ws>
+            const scripts = Object.fromEntries(
+              Object.entries(rest.scripts)
+                .map(([name, script]) => {
+                  const pnpmd = script
+                    .replace('npm run', 'pnpm')
+                    .replace('npm', 'pnpm')
+                    .replace('-w', '-F');
+                  return [name, pnpmd];
+                })
+            );
+
+
+            // Move workspaces from package.json to pnpm-workspace.yaml
+            const newPkgJson = JSON.stringify({ ...rest, scripts }, null, 2);
             fs.writeFileSync(path.join(examplePath, 'package.json'), newPkgJson);
 
             const pnpmWorkspace = `packages:\n` + workspaces.map((ws) => `  - '${ws}'`).join('\n');
             fs.writeFileSync(path.join(examplePath, 'pnpm-workspace.yaml'), pnpmWorkspace);
 
-            // Repalce examples/<example>/* with examples/<example> in root workspace
+            // Replace examples/<example>/* with examples/<example> in root workspace
             const rootWorkspace = fs.readFileSync(path.join(process.cwd(), 'pnpm-workspace.yaml'), 'utf-8');
             const newRootWorkspace = rootWorkspace.replace(`examples/${{ matrix.path }}/*`, `examples/${{ matrix.path }}`);
             fs.writeFileSync(path.join(process.cwd(), 'pnpm-workspace.yaml'), newRootWorkspace);
-
-      - run: cat ./examples/${{ matrix.path }}/pnpm-workspace.yaml
-      - run: cat ./examples/${{ matrix.path }}/package.json
 
       - name: Install dependencies and create separate lockfile
         run: |
