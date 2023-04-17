@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - npm2pnpm
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -36,6 +37,27 @@ jobs:
         with:
           node-version: 18.x
           cache: 'pnpm'
+
+      # Nested workspaces use NPM workspaces but we generate a PNPM lockfile
+      # => we convert the workspace to PNPM before generating the lockfile
+      - name: Convert to PNPM
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const examplePath = path.join(__dirname, 'examples', '${{ matrix.path }}');
+            console.log({ examplePath });
+            const packageJson = require(path.join(examplePath, 'package.json'));
+            const { workspaces, ...rest } = packageJson;
+
+            const newPkgJson = JSON.stringify({ ...rest }, null, 2);
+            fs.writeFileSync(path.join(examplePath, 'package.json'), newPkgJson);
+
+            const pnpmWorkspace = `packages:\n` + workspaces.map((ws) => `  - '${ws}'`).join('\n');
+            fs.writeFileSync(path.join(examplePath, 'pnpm-workspace.yaml'), pnpmWorkspace);
 
       - name: Install dependencies and create separate lockfile
         run: |
