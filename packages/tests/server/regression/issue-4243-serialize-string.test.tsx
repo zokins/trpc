@@ -1,4 +1,3 @@
-import { waitError } from '../___testHelpers';
 import { getServerAndReactClient } from '../react/__reactHelpers';
 import { render, waitFor } from '@testing-library/react';
 import { initTRPC } from '@trpc/server';
