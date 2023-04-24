@@ -1,7 +1,13 @@
 import { routerToServerAndClientNew } from '../___testHelpers';
 import { createQueryClient } from '../__queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Operation, httpBatchLink, splitLink, wsLink } from '@trpc/client/src';
+import {
+  Operation,
+  httpBatchLink,
+  httpLink,
+  splitLink,
+  wsLink,
+} from '@trpc/client/src';
 import { createTRPCReact } from '@trpc/react-query/src/createTRPCReact';
 import { CreateTRPCReactBase } from '@trpc/react-query/src/createTRPCReact';
 import { AnyRouter } from '@trpc/server/src';
@@ -30,7 +36,11 @@ export function getServerAndReactClient<TRouter extends AnyRouter>(
         splitLink({
           condition: (op) => op.type === 'subscription',
           true: wsLink({ client: wsClient }),
-          false: httpBatchLink({ url: httpUrl }),
+          false: splitLink({
+            condition: (op) => !!op.context.skipBatch,
+            false: httpBatchLink({ url: httpUrl }),
+            true: httpLink({ url: httpUrl }),
+          }),
         }),
       ],
     }),
@@ -55,6 +65,7 @@ export function getServerAndReactClient<TRouter extends AnyRouter>(
   return {
     close: opts.close,
     client,
+    proxyClient: opts.proxy,
     queryClient,
     proxy,
     App,
