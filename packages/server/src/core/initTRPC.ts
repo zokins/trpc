@@ -29,6 +29,7 @@ type PartialRootConfigTypes = Partial<RootConfigTypes>;
 
 type CreateRootConfigTypesFromPartial<TTypes extends PartialRootConfigTypes> =
   CreateRootConfigTypes<{
+    tID: symbol;
     ctx: TTypes['ctx'] extends RootConfigTypes['ctx'] ? TTypes['ctx'] : object;
     meta: TTypes['meta'] extends RootConfigTypes['meta']
       ? TTypes['meta']
@@ -101,7 +102,9 @@ function createTRPCInner<TParams extends PartialRootConfigTypes>() {
       : DefaultDataTransformer;
     type $ErrorShape = ErrorFormatterShape<$Formatter>;
 
+    const tID = Symbol('tID');
     type $Config = RootConfig<{
+      tID: typeof tID;
       ctx: $Context;
       meta: $Meta;
       errorShape: $ErrorShape;
@@ -114,6 +117,7 @@ function createTRPCInner<TParams extends PartialRootConfigTypes>() {
     ) as $Transformer;
 
     const config: $Config = {
+      tID: tID,
       transformer,
       isDev:
         runtime?.isDev ?? globalThis.process?.env?.NODE_ENV !== 'production',

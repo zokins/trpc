@@ -6,6 +6,7 @@ import type { TRPCErrorShape } from '../../rpc';
  * @internal
  */
 export interface RootConfigTypes {
+  readonly tID: symbol;
   ctx: object;
   meta: object;
   errorShape: unknown;
@@ -27,6 +28,8 @@ export const isServerDefault: boolean =
  * @internal
  */
 export interface RuntimeConfig<TTypes extends RootConfigTypes> {
+  tID: TTypes['tID'];
+
   /**
    * Use a data transformer
    * @link https://trpc.io/docs/data-transformers
@@ -82,6 +85,7 @@ export interface RootConfig<TGenerics extends RootConfigTypes>
  * @internal
  */
 export type AnyRootConfig = RootConfig<{
+  tID: symbol;
   ctx: any;
   meta: any;
   errorShape: any;
